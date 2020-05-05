@@ -1,5 +1,7 @@
 {
   "mongoURI": "mongodb://127.0.0.1:27017/dev-media",
-  "jwtSecret": "testsecrettoken"
+  "jwtSecret": "testsecrettoken",
+  "githubClientId": "Iv1.b3110a113010a0a1",
+  "githubSecret": "e5f8fa5ef2dcc079315a824691d595e320614bf9"
 
 }
