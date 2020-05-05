@@ -94,11 +94,11 @@ router.post('/', [auth, [
 // @desc    Get all profiles
 // @access  Public
 
-router.get('/', async (req,res) => {
-    try{
-        const profiles = await Profile.find().populate('user', ['name','avatar']);
+router.get('/', async (req, res) => {
+    try {
+        const profiles = await Profile.find().populate('user', ['name', 'avatar']);
         res.json(profiles);
-    }catch (e) {
+    } catch (e) {
         console.error(e.message);
         res.status(500).send('Server Error');
     }
@@ -108,18 +108,37 @@ router.get('/', async (req,res) => {
 // @desc    Get profile by user ID
 // @access  Public
 
-router.get('/user/:user_id', async (req,res) => {
-    try{
-        const profile = await Profile.findOne({ user: req.params.user_id }).populate('user', ['name','avatar']);
-        if(!profile){
-            return res.status(400).json({ msg: 'Profile not found' })
+router.get('/user/:user_id', async (req, res) => {
+    try {
+        const profile = await Profile.findOne({user: req.params.user_id}).populate('user', ['name', 'avatar']);
+        if (!profile) {
+            return res.status(400).json({msg: 'Profile not found'})
         }
         res.json(profile);
-    }catch (e) {
+    } catch (e) {
         console.error(e.message);
-        if(e.name === 'CastError'){
-            return res.status(400).json({ msg: 'Profile not found' })
+        if (e.name === 'CastError') {
+            return res.status(400).json({msg: 'Profile not found'})
         }
+        res.status(500).send('Server Error');
+    }
+})
+
+// @route   DELETE api/profile
+// @desc    Delete profile, user & posts
+// @access  private
+
+router.delete('/', auth, async (req, res) => {
+    try {
+        // TODO Remove users posts
+        // Remove Profile
+        await Profile.findOneAndRemove({user: req.user.id});
+        // Remove User
+        await User.findOneAndRemove({_id: req.user.id});
+
+        res.json({msg: 'Profile Deleted'})
+    } catch (e) {
+        console.error(e.message);
         res.status(500).send('Server Error');
     }
 })
